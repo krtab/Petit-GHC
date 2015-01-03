@@ -4,6 +4,8 @@ import Lexer
 import System.Environment
 import System.Exit
 import Control.Exception
+import Control.Monad
+import Typing2
 
 main =
   catch
@@ -19,4 +21,11 @@ main =
         Right x -> exitSuccess
         Left (l,c)  -> (putStrLn $ "File \"" ++ argFile ++ "\", line " ++ (show (l-1)) ++ ", characters " ++ (show (c-1)) ++ "-" ++ (show c) ++ ":\nsyntax error" ) >> (exitWith . ExitFailure $ 1)
   )
-  (\e -> const (return ()) (e :: SomeException))
+  (\e -> case fromException e :: Maybe ExitCode of
+      Just _ -> throwIO e
+      Nothing -> print e >> (exitWith $ ExitFailure 2)
+  )
+
+
+
+test = (alexScanTokens >=> parser >=> (return . w))
