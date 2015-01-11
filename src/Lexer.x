@@ -130,7 +130,7 @@ alexScanTokens str = go (alexStartPos,'\n',[],str)
   where go inp@(pos,_,_,str) =
           case alexScan inp 0 of
                 AlexEOF -> return $ []
-                AlexError ((AlexPn _ line column),_,_,_) -> Left (line,column)
+                AlexError ((AlexPn _ line column),_,_,_) -> Left ("lexical",line,column)
                 AlexSkip  inp' len     -> go inp'
                 AlexToken inp' len act -> liftA ((act pos (take len str)):)  (go inp')
 

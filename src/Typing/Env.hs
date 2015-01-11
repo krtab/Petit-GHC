@@ -48,7 +48,7 @@ createVar =
 
 find :: Ident -> Env Type
 find id =
-  do poly <- gets (MS.! id)
+  do poly <- gets $ (fromMaybe (error $ "pas clé : " ++ id)) . (MS.lookup id)
      polyToMono poly
   where
     polyToMono (runWriter . runPolyType -> (monotype,bindings)) =
@@ -160,27 +160,27 @@ wScope file =
                   (\def@(id, _) ->
                     do v <- createVar 
                        addNoGen id (TyVar v)
-                       return (def,v) 
+                       return (def,v)
                   )
                   file
      
-      mapM wDef file
-      results <- mapM (\(id, _) -> (\x -> (id,x)) <$> find id ) file
-      restore tmp
-      mapM_ (uncurry addGen) results
+--      mapM wDef file
+   --   results <- mapM (\(id, _) -> (\x -> (id,x)) <$> find id ) file
+  --    restore tmp
+  --    mapM_ (uncurry addGen) results
      
-      -- mapM_
-      --   (\(def@(id,_),v) -> do
-      --       tmp2 <- save
-      --       (_,t) <- wDef def
-      --       t' <- find id
-      --       unify t' t
-      --       t'' <- find id
-      --       restore tmp2
-      --       removeFvars $ S.singleton v
-      --       addGen id t''
-      --   )
-      --   varGiven
+      mapM_
+        (\(def@(id,_),v) -> do
+            tmp2 <- save
+            (_,t) <- wDef def
+            t' <- find id
+            unify t' t
+            t'' <- find id
+            restore tmp2
+            removeFvars $ S.singleton v
+            addGen id t''
+        )
+        varGiven
      
       
 primitives =
@@ -200,6 +200,7 @@ primitives =
      b <- createVar
      removeFvars (S.fromList [a,b]) -- ugly hack !!!
      addGen "case" $ (TyList (TyVar a)) :-> (TyVar b) :-> ((TyVar a) :-> (TyList (TyVar a)) :-> (TyVar b) ) :-> (TyVar b)
+     addGen ">>" $ (TyConst TIO) :-> (TyConst TIO) :-> (TyConst TIO)
      
 runEnv env =
   (flip evalState) 0

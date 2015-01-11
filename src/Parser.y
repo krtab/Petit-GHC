@@ -3,9 +3,9 @@ module Parser where
 import AST
 import Lexer
 }
-%monad {Either (Int,Int)}
+%monad {Either (String,Int,Int)}
 %tokentype { (AlexPosn,Tokens) }
-%error { \(((AlexPn _ line column),_):_) -> Left (line,column)}
+%error { \(((AlexPn _ line column),_):_) -> Left ("syntax",line,column)}
 %name parser
 
 %nonassoc in

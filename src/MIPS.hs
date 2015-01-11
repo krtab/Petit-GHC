@@ -23,6 +23,7 @@ data Instruction =
 
  | ADDI Register Register Int
  | ADD Register Register Register
+ | REM Register Register Register
  | SUB Register Register Register
  | SUBI Register Register Int
  | MUL Register Register Register
@@ -129,6 +130,8 @@ sub r1 r2 r3 = tell . instr $ SUB r1 r2 r3
 add r1 r2 r3 = tell . instr $ ADD r1 r2 r3
 slt r1 r2 r3 = tell . instr $ SLT r1 r2 r3
 mul r1 r2 r3 = tell . instr $ MUL r1 r2 r3
+div r1 r2 r3 = tell . instr $ DIV r1 r2 r3
+rem r1 r2 r3 = tell . instr $ REM r1 r2 r3
 
 jal l = tell . instr $ JAL l
 jr r = tell . instr $ JR r
