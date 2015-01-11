@@ -51,7 +51,7 @@ topoSortWithState graph l =
      if fromMaybe NotVisited (M.lookup l marks) == Visited
        then return ()
        else do let children = fromMaybe [] (S.toList <$> (M.lookup l graph))
-               _ <- sequence $ map (topoSortWithState graph) children
+               () <- mapM_ (topoSortWithState graph) children
                modify $ (M.insert l Visited) *** (l:)
                return ()
 

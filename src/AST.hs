@@ -10,13 +10,23 @@ data Expr a = EApp a (Expr a) (Expr a) --
             | ELet a [Def a] (Expr a)
             | EITE a (Expr a) (Expr a) (Expr a) --
             | ECase a --
-            | Return a --
             | EIdent a Ident --
             | EConst a Value --
-            | EEList a 
             | EOp a Op --
             | EUnaryMinus a --
+            | EEList a
+            | Return a 
             deriving (Show)
+
+data SExpr a = SEApp (SExpr a) (SExpr a)--
+             | SEClos  [SExpr a] Ident --
+             | SEIdent  Ident 
+             | SEConst  Value --
+             | SEClotElem Int --
+             | SELocal Int Int --
+             | SEArg0 --
+             | SELet [SExpr a] (SExpr a)
+               deriving (Show)
 
 posOf (EApp p _ _) = p
 posOf (EAbstr p _ _) = p
@@ -70,6 +80,7 @@ data Value =
      | VChar Char
      | VBool Bool
      deriving (Eq,Show)
+
 
 
 

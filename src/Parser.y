@@ -94,7 +94,7 @@ def1 :: { Def AlexPosn }
 
 simple_expr :: { Expr AlexPosn }
             : '(' expr ')' {$2}
-            | '[' rev_enum_sep(expr,',') ']' {foldr (\x xs -> let l = posOf x in EApp l (EApp l (EOp l Cons) x) xs) (EEList (fst $3)) $2 }
+            | '[' rev_enum_sep(expr,',') ']' {foldl (\xs x -> let l = posOf x in EApp l (EApp l (EOp l Cons) x) xs) (EEList (fst $3)) $2 }
             | ident1     {(\(pos,TIdent1 s) -> EIdent pos s) $1}
             | const      {(\(pos,TConst v) ->  EConst pos v) $1}
 
